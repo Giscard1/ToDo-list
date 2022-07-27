@@ -9,17 +9,27 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Config\Security\FirewallConfig\RememberMe\TokenProvider\DoctrineConfig;
 
 class UserController extends AbstractController
 {
+    private $security;
+
+    public function __construct(Security $security)
+    {
+        $this->security = $security;
+    }
+
     /**
      * @Route("/users", name="user_list")
      * @param UserRepository $userRepository
      */
     public function listAction(UserRepository $userRepository)
     {
-        //return $this->render('user/list.html.twig', ['users' => $this->getDoctrine()->getRepository('AppBundle:User')->findAll()]);
+        if (!$this->security->isGranted('ROLE_ADMIN')){
+            return $this->redirectToRoute('homepage');
+        }
         return $this->render('user/list.html.twig', ['users' => $userRepository->findAll()]);
     }
 
@@ -27,25 +37,29 @@ class UserController extends AbstractController
      * @Route("/users/create", name="user_create")
      * @param Request $request
      * @param UserPasswordHasherInterface $passwordHasher
+     * @param Security $security
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function createAction(Request $request, UserPasswordHasherInterface $passwordHasher)
+    public function createAction(Request $request, UserPasswordHasherInterface $passwordHasher, security $security)
     {
-        $user = new User();
-        $form = $this->createForm(UserType::class, $user);
+        //redirige l'utilisateur vers la homepage s'il n'est pas connecté
+        //if (!$this->security->isGranted('IS_AUTHENTICATED_FULLY')){
+        if (!$this->security->isGranted('ROLE_ADMIN')){
+            return $this->redirectToRoute('homepage');
+        }
+
+        $form = $this->createForm(UserType::class);
 
         $form->handleRequest($request);
-
         if ($form->isSubmitted() && $form->isValid()) {
+            $user = $form->getData();
             $em = $this->getDoctrine()->getManager();
-            //$password = $this->get('security.password_encoder')->encodePassword($user, $user->getPassword());
-            //TODO Hascher le mot de passe
-            //$user->setPassword($password);
             $plaintextPassword = $form["password"]->getData();
             $hashedPassword = $passwordHasher->hashPassword(
                 $user,
                 $plaintextPassword
             );
+
             $user->setPassword($hashedPassword);
             $em->persist($user);
             $em->flush();

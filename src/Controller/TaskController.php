@@ -8,9 +8,18 @@ use App\Repository\TaskRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class TaskController extends AbstractController
 {
+
+    private $security;
+
+    public function __construct(Security $security)
+    {
+        $this->security = $security;
+    }
 
     /**
      * Foctionne
@@ -62,12 +71,14 @@ class TaskController extends AbstractController
      */
     public function editAction(Task $task, Request $request)
     {
+        $user = $this->getUser();
         $form = $this->createForm(TaskType::class, $task);
-
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
+            if ($user){
+                $task->setUsers($user);
+            }
 
             $this->getDoctrine()->getManager()->flush();
 
@@ -99,17 +110,47 @@ class TaskController extends AbstractController
 
     /**
      * @Route("/tasks/{id}/delete", name="task_delete")
+     * @param int $id
+     * @param UserInterface|null $user
+     * @param TaskRepository $taskRepository
+     * @param Security $security
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    //TODO Faire les memes modifs
-
-    public function deleteTaskAction(Task $task)
+    public function deleteTaskAction(int $id, ?UserInterface $user, TaskRepository $taskRepository, security $security)
     {
-        $em = $this->getDoctrine()->getManager();
-        $em->remove($task);
-        $em->flush();
+        $delete = false;
 
-        $this->addFlash('success', 'La tâche a bien été supprimée.');
+        if (!$this->security->isGranted('IS_AUTHENTICATED_FULLY')){
+            return $this->redirectToRoute('homepage');
+        }
 
-        return $this->redirectToRoute('task_list');
+        if ($id != $taskRepository->find($id)->getId()){
+            return $this->redirectToRoute('homepage');
+        }
+
+        $tasksUserConnecte = $taskRepository->findBy(['users' => $user->getId()]);
+
+        foreach ($tasksUserConnecte as $task){
+            if ($task->getId() == $id) {
+                $delete = true;
+            }
+        }
+
+        if ($user->getRoles() == 'ROLE_ADMIN') {
+            $delete = true;
+        }
+
+        if ($delete == true){
+            $em = $this->getDoctrine()->getManager();
+            $task = $em->getRepository(Task::class)->find($id);
+            $em->remove($task);
+            $em->flush();
+
+            $this->addFlash('success', 'La tâche a bien été supprimée.');
+            return $this->redirectToRoute('task_list');
+        }else{
+            return $this->redirectToRoute('homepage');
+        }
     }
+
 }
