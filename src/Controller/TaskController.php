@@ -37,6 +37,10 @@ class TaskController extends AbstractController
      */
     public function createAction(Request $request)
     {
+        if (!$this->security->isGranted('IS_AUTHENTICATED_FULLY')){
+            return $this->redirectToRoute('homepage');
+        }
+
         $task = new Task();
         $user = $this->getUser();
         $form = $this->createForm(TaskType::class, $task);
