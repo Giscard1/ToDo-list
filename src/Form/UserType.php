@@ -21,7 +21,8 @@ class UserType extends AbstractType
         $builder
             ->add('username', TextType::class, ['label' => "Nom d'utilisateur",
                 'attr' => array(
-                    'class' => 'form-control'
+                    'class' => 'form-control','class'=>'calendar'
+                    
                 )])
             ->add('password', RepeatedType::class, [
                 'type' => PasswordType::class,

@@ -64,22 +64,28 @@ class TaskController extends AbstractController
      * @Route("/tasks/{id}/edit", name="task_edit")
      */
     //TODO Ajouter le code en commentaire
+    //TODO A SUPPRIMER LES CODES EN COMMENTAIRES 13/03/2023
+
     /*
      *    public function editAction($id, Request $request,TaskRepository $taskRepository)
     {
         $task = $taskRepository->find($id);
      */
-    public function editAction(Task $task, Request $request)
+    //public function editAction(Task $task, Request $request) MODIFICATION FAITES CAR LA PAGE D'EDIT NE SE LANCÉ PAS 13/03/2023
+    public function editAction($id, Request $request,TaskRepository $taskRepository)
     {
-        $user = $this->getUser();
+        $task = $taskRepository->find($id);
+
+        //$user = $this->getUser();MODIFICATION FAITES POUR NE PAS CHANGER L'ID DE L'AUTEUR QUI MODIFIE LA TASK 13/03/2023
         $form = $this->createForm(TaskType::class, $task);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            /* MODIFICATION FAITES POUR NE PAS CHANGER L'ID DE L'AUTEUR QUI MODIFIE LA TASK 13/03/2023
             if ($user){
                 $task->setUsers($user);
             }
-
+            */
             $this->getDoctrine()->getManager()->flush();
 
             $this->addFlash('success', 'La tâche a bien été modifiée.');
