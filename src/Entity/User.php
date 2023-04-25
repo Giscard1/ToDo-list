@@ -107,6 +107,10 @@ class User implements UserInterface
         $this->email = $email;
     }
 
+    public function getUserIdentifier(): string
+    {
+        return (string) $this->email;
+    }
     /*
     public function getRoles()
     {
@@ -135,10 +139,5 @@ class User implements UserInterface
     public function eraseCredentials()
     {
     }
-/*
-    public function __toString()
-    {
-        return (string)$this->roles;
-    }
-*/
+
 }

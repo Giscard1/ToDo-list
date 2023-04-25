@@ -40,7 +40,7 @@ class TaskController extends AbstractController
         if (!$this->security->isGranted('IS_AUTHENTICATED_FULLY')){
             return $this->redirectToRoute('homepage');
         }
-
+        
         $task = new Task();
         $user = $this->getUser();
         $form = $this->createForm(TaskType::class, $task);
@@ -51,6 +51,7 @@ class TaskController extends AbstractController
             if ($user){
                 $task->setUsers($user);
             }
+
             $em = $this->getDoctrine()->getManager();
 
             $em->persist($task);
@@ -110,10 +111,7 @@ class TaskController extends AbstractController
 
     public function toggleTaskAction(Task $task)
     {
-        $task->toggle(!$task->isDone());
-        $this->getDoctrine()->getManager()->flush();
-
-        $this->addFlash('success', sprintf('La tâche %s a bien été marquée comme faite.', $task->getTitle()));
+       
 
         return $this->redirectToRoute('task_list');
     }

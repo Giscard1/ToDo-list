@@ -44,11 +44,12 @@ class UserController extends AbstractController
     {
         //redirige l'utilisateur vers la homepage s'il n'est pas connecté
         //if (!$this->security->isGranted('IS_AUTHENTICATED_FULLY')){
-           
+         
+         
         if (!$this->security->isGranted('ROLE_ADMIN')){
             return $this->redirectToRoute('homepage');
         }
-
+        
         $form = $this->createForm(UserType::class);
 
         $form->handleRequest($request);
