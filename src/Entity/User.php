@@ -72,7 +72,7 @@ class User implements UserInterface
         $this->task = $task;
     }
 
-    public function getUsername()
+    public function getUsername():string
     {
         return $this->username;
     }
@@ -82,12 +82,12 @@ class User implements UserInterface
         $this->username = $username;
     }
 
-    public function getSalt()
+    public function getSalt():?string
     {
         return null;
     }
 
-    public function getPassword()
+    public function getPassword(): ?string
     {
         return $this->password;
     }

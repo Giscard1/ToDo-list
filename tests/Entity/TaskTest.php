@@ -7,14 +7,18 @@ use App\Entity\User;
 use DateTime;
 use PHPUnit\Framework\TestCase;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+ 
+ //@covers Class TaskTest
+ //@package App\Tests\Entity
 
-/**
- * @covers Class TaskTest
+ /**
+ * @covers App\Entity\Task
  * @package App\Tests\Entity
  */
+ 
 class TaskTest extends KernelTestCase
 {
-
+    
     public function testValidTask()
     {
     // fonctionnel
@@ -28,7 +32,7 @@ class TaskTest extends KernelTestCase
 
     // Valider la tâche
     self::bootKernel();
-    $error = self::$container->get('validator')->validate($task);
+    $error = static::$container->get('validator')->validate($task);
     $this->assertCount(0, $error);
     }
 

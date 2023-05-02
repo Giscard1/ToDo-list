@@ -8,12 +8,25 @@
 
     composer install
 
-    4 - Créez la base de données si elle n'existe pas déjà, taper la commande ci-dessous en vous plaçant dans le répertoire du projet :
+    4 - Créez la base de données, taper la commande ci-dessous en vous plaçant dans le répertoire du projet :
 
     php bin/console doctrine:database:create
 
     5 - Créez les différentes tables de la base de données en appliquant les migrations :
 
     php bin/console doctrine:migrations:migrate
+
+    6 - Charger les fixtures :
+
+    php bin/console doctrine:fixtures:load
+
+    7 - Créez la base de données de test et charger les fixtures :
+
+    php bin/console doctrine:database:create --env=test
+
+    php bin/console doctrine:migrations:migrate -n --env=test
+    
+    php bin/console doctrine:fixtures:load -n --env=test
+
 
     Félicitations le projet est installé correctement, vous pouvez désormais commencer à l'utiliser à votre guise !

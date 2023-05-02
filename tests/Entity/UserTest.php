@@ -7,10 +7,15 @@ use App\Entity\Task;
 use App\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
-/**
- * @covers Class UserTest
+
+ //@covers Class UserTest
+ //@package App\Tests\Entity
+
+  /**
+ * @covers App\Entity\User
  * @package App\Tests\Entity
  */
+ 
 class UserTest extends KernelTestCase
 {
 

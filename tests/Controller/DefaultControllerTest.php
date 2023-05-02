@@ -15,25 +15,24 @@ use Symfony\Component\HttpKernel\Event\RequestEvent;
 class DefaultControllerTest extends WebTestCase
 { 
     
-    /*
+    
     public function testIndexActionAdmin()
     {
-        //fonctionnelle
         $client = static::createClient();
         $client->request('GET', '/');
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
         
         $this->assertSelectorTextContains("h1", "Bienvenue sur Todo List, l'application vous permettant de gérer l'ensemble de vos tâches sans effort !");
-        $crawler = $client->request('GET', '/login');
-        $form = $crawler->selectButton('Se connecter')->form([
-            '_username' => 'giscard',
-            '_password' => '123456'
-        ]);
-        $client->submit($form);
-        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
+        $client->request('GET', '/login');
+
+        $userRepository = $client->getContainer()->get('doctrine.orm.entity_manager')->getRepository(User::class);
+        $testUser = $userRepository->findOneBy(['username' => 'admin']);
+        $client->loginUser($testUser);
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
     }
-    */
-    /*
+    
+    
     public function testIndexActionUser()
     {
         //fonctionnelle
@@ -41,47 +40,23 @@ class DefaultControllerTest extends WebTestCase
         $client->request('GET', '/');
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
         
-        $this->assertSelectorTextContains("h1", "Bienvenue sur Todo List, l'application vous permettant de gérer l'ensemble de vos tâches sans effort !");
-        $crawler = $client->request('GET', '/login');
-        $form = $crawler->selectButton('Se connecter')->form([
-            '_username' => 'bbb',
-            '_password' => '123456'
-        ]);
-        $client->submit($form);
-        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
-    }
+        $userRepository = $client->getContainer()->get('doctrine.orm.entity_manager')->getRepository(User::class);
+        $testUser = $userRepository->findOneBy(['username' => 'user']);
+        $client->loginUser($testUser);
 
-
-    public function testIndexActionWrongData()
-    {
-        //fonctionnelle
-        $client = static::createClient();
-        $client->request('GET', '/');
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
-        
-        $this->assertSelectorTextContains("h1", "Bienvenue sur Todo List, l'application vous permettant de gérer l'ensemble de vos tâches sans effort !");
-        $crawler = $client->request('GET', '/login');
-        $form = $crawler->selectButton('Se connecter')->form([
-            '_username' => 'bbb',
-            '_password' => 'aaaa'
-        ]);
-        $client->submit($form);
-        $this->assertResponseRedirects();
-        $client->followRedirect();
-        $this->assertSelectorExists('.alert.alert-danger');
     }
 
     public function testLogout()
     {   
-        //fonctionnelle
         $client = static::createClient();
-        $crawler = $client->request('GET', '/login');
-        $form = $crawler->selectButton('Se connecter')->form([
-            '_username' => 'bbb',
-            '_password' => '123456'
-        ]);        
+
+        $userRepository = $client->getContainer()->get('doctrine.orm.entity_manager')->getRepository(User::class);
+        $testUser = $userRepository->findOneBy(['username' => 'user']);
+        $client->loginUser($testUser);
+
         $client->request('GET', '/logout');
         return $this->assertSame(302, $client->getResponse()->getStatusCode());
     }
-    */
+    
 }

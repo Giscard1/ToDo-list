@@ -107,13 +107,15 @@ class TaskController extends AbstractController
     /**
      * @Route("/tasks/{id}/toggle", name="task_toggle")
      */
-    //TODO Faire les memes modifs
-
     public function toggleTaskAction(Task $task)
     {
-       
+            //TODO Faire les memes modifs
 
-        return $this->redirectToRoute('task_list');
+            $task->toggle(!$task->isDone());
+            $em = $this->getDoctrine()->getManager();
+            $em->flush();
+            $this->addFlash('success', sprintf('La tâche %s a bien été marquée comme faite.', $task->getTitle()));
+            return $this->redirectToRoute('task_list');
     }
 
     /**
