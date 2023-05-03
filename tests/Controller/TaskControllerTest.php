@@ -117,20 +117,15 @@ class TaskControllerTest extends WebTestCase
     {
         $client = static::createClient();
 
-        // Récupère la première tâche
         $taskRepository = $client->getContainer()->get('doctrine.orm.entity_manager')->getRepository(Task::class);
         $task = $taskRepository->findOneBy(['id' => 1]);;
-        // Accède à la page de la tâche
         $crawler = $client->request('GET', '/tasks/'.$task->getId().'/toggle');
 
-        // Vérifie que la page a bien répondu avec un code 302 (redirection)
         $this->assertEquals(302, $client->getResponse()->getStatusCode());
 
-        // Vérifie que la tâche a été correctement modifiée
         $updatedTask = $taskRepository->find($task->getId());
         $this->assertEquals($task->isDone(), $updatedTask->isDone());
 
-        // Vérifie que la page de redirection est bien la liste des tâches
         $this->assertFalse($client->getResponse()->isRedirect('tasks'));
     }
 
