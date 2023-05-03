@@ -14,14 +14,13 @@ class UserTestFixture extends Fixture
     public const User_REF_USER = 'user-ref-user';
     public const User_REF_USER_2 = 'user-ref-user-2';
     public const User_REF_ANONYM = 'user-ref-anonym';
-
+                    
     private $userPasswordHasher; 
 
     public function __construct(UserPasswordHasherInterface $userPasswordHasher)
     {
         $this->userPasswordHasher = $userPasswordHasher;
     }
-
 
     public function load(ObjectManager $manager): void
     {
@@ -49,7 +48,7 @@ class UserTestFixture extends Fixture
         $userAnonym->setUsername('anonym');
         $userAnonym->setPassword($this->userPasswordHasher->hashPassword($userAnonym, "123456"));
         $userAnonym->setEmail('anonym@gmail.com');
-        $userAnonym->setRoles([]);
+        $userAnonym->setRoles(['ROLE_ANONYME']);
 
         $manager->persist($userAdmin);
         $manager->persist($user);

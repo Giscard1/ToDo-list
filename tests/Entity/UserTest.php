@@ -89,4 +89,22 @@ class UserTest extends KernelTestCase
 
         $this->assertNull($user->getSalt());
     }
+
+    public function testGetTask()
+    {
+        $user = new User();
+
+        $task = 'some task';
+        $user->setTask($task);
+        $this->assertEquals($task, $user->getTask());
+    }
+
+    public function testSetTask()
+    {
+        $user = new User();
+
+        $task = 'some task';
+        $user->setTask($task);
+        $this->assertEquals($task,$user->getTask());
+    }
 }
